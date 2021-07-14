@@ -397,6 +397,7 @@ bool getState() {
             state = UNSAFE;
 
     return state;
+    
 }
 
 void *threadRun(void *cid) {
@@ -433,4 +434,5 @@ void *threadRun(void *cid) {
     sleep(1);
 
     return NULL;
+
 }
