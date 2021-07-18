@@ -11,6 +11,10 @@
  Version  2021-06-19
  -------------------------------------
  GitHub Repository: https://github.com/xeyleon/os_deadlock_avoidance
+ 
+ Comments: When resources a requested, they are granted even if it will lead to an
+ unsafe state. The user will be warned when the state is unsafe upon the fulfillment
+ of a request. The current state can also be viewed through '*' command.
  */
  
 #include <unistd.h>
