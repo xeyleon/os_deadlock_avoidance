@@ -10,8 +10,7 @@
  Email:   ceyl0550@mylaurier.ca
  Version  2021-06-19
  -------------------------------------
- Comments:
- 
+ GitHub Repository: https://github.com/xeyleon/os_deadlock_avoidance
  */
  
 #include <unistd.h>
