@@ -10,8 +10,8 @@ To understand deadlock avoidance and practice the implementation of the Banker's
 ***
 
 ## Screenshots
-![image]()
-![image]()
+![screenshot1](/img/screenshot01.png "Screenshot 1")
+![screenshot2](/img/screenshot02.png "Screenshot 2")
 
 ***
 
@@ -49,12 +49,120 @@ Clients are identified by their ID. The current implementation has a maximum of 
 ***
 
 ## Tests
-...
+```bash
+user@ubuntu:~/assignment_4$ ./201490550_a04 9 8 7 9
+Number of customers: 5
+Currently available resources: 9 8 7 9 
+Maximum resources from file:
+6 4 7 3 
+4 2 3 2 
+2 5 3 3 
+6 3 3 2 
+5 6 7 5 
+Enter Command: RQ 3 1 2 3 1
+Resource request is satisfied.
+Enter Command: RQ 0 1 1 1 1
+Resource request is satisfied.
+Enter Command: *
+Maximum:
+6 4 7 3 
+4 2 3 2 
+2 5 3 3 
+6 3 3 2 
+5 6 7 5 
+
+Current Need:
+5 3 6 2 
+4 2 3 2 
+2 5 3 3 
+5 1 0 1 
+5 6 7 5 
+
+Current Allocation:
+1 1 1 1 
+0 0 0 0 
+0 0 0 0 
+1 2 3 1 
+0 0 0 0 
+
+Currently Available Resources: 7 5 3 7 
+Current State: SAFE
+Enter Command: RUN
+Safe Sequence is: < 1 2 3 0 4 >
+Executing threads:
+--> Client/Thread 1
+	Allocated Resources: 0 0 0 0 
+	Needed: 4 2 3 2 
+	Available: 7 5 3 7 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 7 5 3 7 
+--> Client/Thread 2
+	Allocated Resources: 0 0 0 0 
+	Needed: 2 5 3 3 
+	Available: 7 5 3 7 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 7 5 3 7 
+--> Client/Thread 3
+	Allocated Resources: 1 2 3 1 
+	Needed: 5 1 0 1 
+	Available: 7 5 3 7 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 8 7 6 8 
+--> Client/Thread 0
+	Allocated Resources: 1 1 1 1 
+	Needed: 5 3 6 2 
+	Available: 8 7 6 8 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 9 8 7 9 
+--> Client/Thread 4
+	Allocated Resources: 0 0 0 0 
+	Needed: 5 6 7 5 
+	Available: 9 8 7 9 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 9 8 7 9 
+Thread execution complete.
+```
 
 ***
 
 ## Code Example
-...
+```c
+//Function Declarations
+void initMax();
+void updateNeed();
+void printMax();
+void printNeed();
+void printAllocation();
+void printAvailable();
+bool getCommand();
+bool validateCommand(char *command);
+int identifyCommand();
+void processCommand(char *command);
+void request(char *cmd[]);
+void release(char *cmd[]);
+void displayState();
+void run();
+bool getState();
+void *threadRun(void *cid);
+
+//Banker's Algorithm Data Structures
+int maximum[MAX_CLIENTS][RES_TYPE_COUNT];
+int available[RES_TYPE_COUNT];
+int allocation[MAX_CLIENTS][RES_TYPE_COUNT];
+int need[MAX_CLIENTS][RES_TYPE_COUNT];
+int safe_sequence[MAX_CLIENTS] = {-1};
+int state = SAFE;
+```
 
 ***
 
