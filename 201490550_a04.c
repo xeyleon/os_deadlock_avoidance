@@ -12,16 +12,17 @@
  -------------------------------------
  GitHub Repository: https://github.com/xeyleon/os_deadlock_avoidance
  
- Comments: When resources a requested, they are granted even if it will lead to an
+ Comments:
+ When resources a requested, they are granted even if it will lead to an
  unsafe state. The user will be warned when the state is unsafe upon the fulfillment
  of a request. The current state can also be viewed through '*' command.
+
  Furthermore, in order make they program user-friendly, absurd resource requests, such as
- RQ 1 100 100 100 100, will be granted, so long as sufficient resources are free, and the
- requesting client has a need, andthe banker ensures that client are not allocated more than
- their maximum need.
+ RQ 1 100 100 100 100, will be granted, so long as sufficient resources are free, as the
+ banker will assume the client is requesting their maximum resource need.
  For instance, say client 1 has a need of 3 3 3 3 and the command RQ 1 100 100 100 100
- is executed, then the banker will accept the request, but will ensure the client will only be granted
- 3 3 3 3. Howeveer, if there is insufficient free resource to grant the request, it will be denied.
+ is executed. The banker will assume the client is requesting 3 3 3 3, and so long as resources
+ are available, accepts the request, and allocate 3 3 3 3 to the client.
  */
  
 #include <unistd.h>
@@ -321,7 +322,7 @@ void release(char *cmd[]){
 
     int client_id = atoi(cmd[1]);
     int res_release = 0;
-
+    int prev_state = state;
     for (int i = 0; i < RES_TYPE_COUNT; i++){
         res_release = MIN(atoi((cmd[2+i])),allocation[client_id][i]);
         available[i] += res_release;
@@ -333,6 +334,8 @@ void release(char *cmd[]){
 
     if (getState() == UNSAFE)
         printf("WARNING: The current state is unsafe.\n");
+    if (prev_state == UNSAFE && state == SAFE)
+        printf("INFO: The current state is safe.\n");
 
 }
 
