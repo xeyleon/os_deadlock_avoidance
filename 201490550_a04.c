@@ -15,6 +15,13 @@
  Comments: When resources a requested, they are granted even if it will lead to an
  unsafe state. The user will be warned when the state is unsafe upon the fulfillment
  of a request. The current state can also be viewed through '*' command.
+ Furthermore, in order make they program user-friendly, absurd resource requests, such as
+ RQ 1 100 100 100 100, will be granted, so long as sufficient resources are free, and the
+ requesting client has a need, andthe banker ensures that client are not allocated more than
+ their maximum need.
+ For instance, say client 1 has a need of 3 3 3 3 and the command RQ 1 100 100 100 100
+ is executed, then the banker will accept the request, but will ensure the client will only be granted
+ 3 3 3 3. Howeveer, if there is insufficient free resource to grant the request, it will be denied.
  */
  
 #include <unistd.h>
@@ -285,19 +292,19 @@ void request(char *cmd[]){
     int client_id = atoi(cmd[1]);
     int res_request = 0;
     for (int i = 0; i < RES_TYPE_COUNT; i++){
-        res_request = MIN(atoi((cmd[2+i])),maximum[client_id][i]);
+        res_request = MIN(atoi((cmd[2+i])),need[client_id][i]);
         if (res_request > available[i]){
             printf("Resource request cannot be satisfied.\n");
             return;
         }
 
-        if (res_request+allocation[client_id][i] > need[client_id][i]){
+        if (res_request+allocation[client_id][i] > maximum[client_id][i]){
             printf("A client cannot request more resources than the maximum declared.\n");
             return;
         }
     }
     for (int i = 0; i < RES_TYPE_COUNT; i++){
-        res_request = MIN(atoi((cmd[2+i])),maximum[client_id][i]);
+        res_request = MIN(atoi((cmd[2+i])),need[client_id][i]);
         available[i] -= res_request;
         need[client_id][i] -= res_request;
         allocation[client_id][i] += res_request;
@@ -369,73 +376,73 @@ void run(){
 
 bool getState() {
 
-    state = SAFE;
-    bool run[MAX_CLIENTS] = { false };
-    
-    int dummy_avail[RES_TYPE_COUNT];
-    for (int c = 0; c < RES_TYPE_COUNT; c++)
-        dummy_avail[c] = available[c];
+	state = SAFE;
+	bool run[MAX_CLIENTS] = { false };
+	
+	int dummy_avail[RES_TYPE_COUNT];
+	for (int c = 0; c < RES_TYPE_COUNT; c++)
+		dummy_avail[c] = available[c];
 
-    int seq_idx = 0;
-    for (int k = 0; k < RES_TYPE_COUNT; k++)
-        for (int i = 0; i < MAX_CLIENTS; i++)
-            if (!run[i]) {
-                bool flag = false;
-                for (int j = 0; j < RES_TYPE_COUNT; j++)
-                    if (need[i][j] > dummy_avail[j]) {
-                        flag = true;
-                        break;
-                    }
+	int seq_idx = 0;
+	for (int k = 0; k < RES_TYPE_COUNT; k++)
+		for (int i = 0; i < MAX_CLIENTS; i++)
+			if (!run[i]) {
+				bool flag = false;
+				for (int j = 0; j < RES_TYPE_COUNT; j++)
+					if (need[i][j] > dummy_avail[j]) {
+						flag = true;
+						break;
+					}
 
-                if (!flag) {
-                    safe_sequence[seq_idx++] = i;
-                    for (int h = 0; h < RES_TYPE_COUNT; h++)
-                        dummy_avail[h] += allocation[i][h];
-                    run[i] = true;
-                }
-            }
+				if (!flag) {
+					safe_sequence[seq_idx++] = i;
+					for (int h = 0; h < RES_TYPE_COUNT; h++)
+						dummy_avail[h] += allocation[i][h];
+					run[i] = true;
+				}
+			}
 
-    for (int i = 0; i < MAX_CLIENTS; i++)
-        if (!run[i])
-            state = UNSAFE;
+	for (int i = 0; i < MAX_CLIENTS; i++)
+		if (!run[i])
+			state = UNSAFE;
 
-    return state;
-    
+	return state;
+	
 }
 
 void *threadRun(void *cid) {
 
-    int *client_id = (int *)cid;
-    printf("--> Client/Thread %d\n", *client_id);
-    printf("\tAllocated Resources: ");
-    for (int i = 0; i < RES_TYPE_COUNT; i++)
-        printf("%d ", allocation[*client_id][i]);
+	int *client_id = (int *)cid;
+	printf("--> Client/Thread %d\n", *client_id);
+	printf("\tAllocated Resources: ");
+	for (int i = 0; i < RES_TYPE_COUNT; i++)
+		printf("%d ", allocation[*client_id][i]);
 
-    printf("\n");
-    printf("\tNeeded: ");
-    for (int i=0; i < RES_TYPE_COUNT; i++)
-        printf("%d ", need[*client_id][i]);
-    
-    printf("\n");
-    printf("\tAvailable: ");
-    for (int i = 0; i < RES_TYPE_COUNT; i++)
-        printf("%d ", available[i]);
-    printf("\n");
+	printf("\n");
+	printf("\tNeeded: ");
+	for (int i=0; i < RES_TYPE_COUNT; i++)
+		printf("%d ", need[*client_id][i]);
+	
+	printf("\n");
+	printf("\tAvailable: ");
+	for (int i = 0; i < RES_TYPE_COUNT; i++)
+		printf("%d ", available[i]);
+	printf("\n");
 
-    printf("\tThread has started.\n");
-    sleep(1);
-    printf("\tThread has finished.\n");
-    printf("\tThread is releasing resources.\n");
-    printf("\tNew Available: ");
-    for (int i = 0; i < RES_TYPE_COUNT; i++){
-        available[i] =  available[i] + allocation[*client_id][i];
-        allocation[*client_id][i] = 0;
-        printf("%d ", available[i]);
-    }
-    printf("\n");
-    updateNeed();
-    sleep(1);
+	printf("\tThread has started.\n");
+	sleep(1);
+	printf("\tThread has finished.\n");
+	printf("\tThread is releasing resources.\n");
+	printf("\tNew Available: ");
+	for (int i = 0; i < RES_TYPE_COUNT; i++){
+		available[i] =  available[i] + allocation[*client_id][i];
+		allocation[*client_id][i] = 0;
+		printf("%d ", available[i]);
+	}
+	printf("\n");
+	updateNeed();
+	sleep(1);
 
-    return NULL;
+	return NULL;
 
 }
