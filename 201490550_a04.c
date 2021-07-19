@@ -23,6 +23,9 @@
  For instance, say client 1 has a need of 3 3 3 3 and the command RQ 1 100 100 100 100
  is executed. The banker will assume the client is requesting 3 3 3 3, and so long as resources
  are available, accepts the request, and allocate 3 3 3 3 to the client.
+ Similarly, releasing of resources is handled the same.
+ For instance, say client 1 current has 2 2 2 2 allocated and RL 1 100 100 100 100 is executed.
+ The banker will accept the command, but will only release 2 2 2 2 from client 1.
  */
  
 #include <unistd.h>
