@@ -13,16 +13,13 @@
  GitHub Repository: https://github.com/xeyleon/os_deadlock_avoidance
  
  Comments:
- When resources a requested, they are granted even if it will lead to an
- unsafe state. The user will be warned when the state is unsafe upon the fulfillment
- of a request. The current state can also be viewed through '*' command.
-
- Furthermore, in order make they program user-friendly, absurd resource requests, such as
- RQ 1 100 100 100 100, will be granted, so long as sufficient resources are free, as the
+ In order make they program user-friendly, absurd resource requests, such as
+ RQ 1 100 100 100 100, will be granted, so long as sufficient resources are available, as the
  banker will assume the client is requesting their maximum resource need.
  For instance, say client 1 has a need of 3 3 3 3 and the command RQ 1 100 100 100 100
  is executed. The banker will assume the client is requesting 3 3 3 3, and so long as resources
- are available, accepts the request, and allocate 3 3 3 3 to the client.
+ are available, accepts the request, and allocate 3 3 3 3 to client 1.
+
  Similarly, releasing of resources is handled the same.
  For instance, say client 1 current has 2 2 2 2 allocated and RL 1 100 100 100 100 is executed.
  The banker will accept the command, but will only release 2 2 2 2 from client 1.
@@ -48,11 +45,11 @@
 #define MAX_BUFFER 100
 #define REQUEST_CMD "RQ"
 #define RELEASE_CMD "RL"
-#define STATUS_CMD "*"
-#define RUN_CMD "RUN"
-#define QUIT_CMD "QUIT"
+#define STATUS_CMD "Status"
+#define RUN_CMD "Run"
+#define EXIT_CMD "Exit"
 #define MIN(a,b) ((a) < (b) ? a : b)
-enum COMMANDS {RQ = 1, RL = 2, STATUS = 3, RUN = 4, QUIT = 5};
+enum COMMANDS {RQ = 1, RL = 2, STATUS = 3, RUN = 4, EXIT = 5};
 enum STATE {UNSAFE = 0, SAFE = 1};
 
 //Function Declarations
@@ -200,7 +197,7 @@ bool getCommand(){
             case RUN:
                 run();
                 break;
-            case QUIT:
+            case EXIT:
                 printf("Program aborted.\n");
                 exit(0);
                 break;
@@ -238,7 +235,7 @@ bool validateCommand(char *command){
         else
             return true;
     }
-    else if ( !(strcmp(token,RUN_CMD)) || !(strcmp(token,STATUS_CMD)) || !(strcmp(token,QUIT_CMD)) )
+    else if ( !(strcmp(token,RUN_CMD)) || !(strcmp(token,STATUS_CMD)) || !(strcmp(token,EXIT_CMD)) )
         return true;
 
     printf("Invalid Command.\n");
@@ -259,8 +256,8 @@ int identifyCommand(char *command){
         return RUN;
     if (!(strcmp(token,STATUS_CMD)))
         return STATUS;
-    if (!(strcmp(token,QUIT_CMD)))
-        return QUIT;
+    if (!(strcmp(token,EXIT_CMD)))
+        return EXIT;
 
     return 0;
 
@@ -298,7 +295,7 @@ void request(char *cmd[]){
     for (int i = 0; i < RES_TYPE_COUNT; i++){
         res_request = MIN(atoi((cmd[2+i])),need[client_id][i]);
         if (res_request > available[i]){
-            printf("Resource request cannot be satisfied.\n");
+            printf("Resource request cannot be satisfied due to insufficient resources.\n");
             return;
         }
 
@@ -307,17 +304,30 @@ void request(char *cmd[]){
             return;
         }
     }
+
+    int temp[RES_TYPE_COUNT];
     for (int i = 0; i < RES_TYPE_COUNT; i++){
         res_request = MIN(atoi((cmd[2+i])),need[client_id][i]);
+        temp[i] = res_request;
         available[i] -= res_request;
         need[client_id][i] -= res_request;
         allocation[client_id][i] += res_request;
     }
 
-    printf("Resource request is satisfied.\n");
+    if (getState() == UNSAFE){
+        //printf("WARNING: The current state is unsafe.\n");
+        for (int i = 0; i < RES_TYPE_COUNT; i++){
+            available[i] += temp[i];
+            need[client_id][i] += temp[i];
+            allocation[client_id][i] -= temp[i];
+        }
+        getState();
+        printf("Resource request has been denied due to safety concerns.\n");
+    }
+    else {
+        printf("Resource request has been satisfied.\n");
+    }
 
-    if (getState() == UNSAFE)
-        printf("WARNING: The current state is unsafe.\n");
 
 }
 
@@ -326,6 +336,13 @@ void release(char *cmd[]){
     int client_id = atoi(cmd[1]);
     int res_release = 0;
     int prev_state = state;
+
+    // for (int i = 0; i < RES_TYPE_COUNT; i++)
+    //     if (allocation[client_id][i] < atoi((cmd[2+i]))) {
+    //         printf("A client cannot release more resources than they have allocated.\n");
+    //         return;
+    //     }
+
     for (int i = 0; i < RES_TYPE_COUNT; i++){
         res_release = MIN(atoi((cmd[2+i])),allocation[client_id][i]);
         available[i] += res_release;
@@ -333,7 +350,7 @@ void release(char *cmd[]){
         allocation[client_id][i] -= res_release;
     }
 
-    printf("Resources released.\n");
+    printf("Resources have been successfuly released.\n");
 
     if (getState() == UNSAFE)
         printf("WARNING: The current state is unsafe.\n");
@@ -376,7 +393,7 @@ void run(){
         printf("Thread execution complete.\n");
     }
     else
-        printf("Current state in unsafe. Unable to proceed.\n");
+        printf("Current state is unsafe. Unable to proceed.\n");
 
 }
 
