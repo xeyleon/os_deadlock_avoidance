@@ -361,18 +361,15 @@ void release(char *cmd[]){
 
 void displayState(){
 
-    printf("Maximum:\n");
+    printf("Maximum Resources:\n");
     printMax();
-    printf("\n");
-    printf("Current Need:\n");
-    printNeed();
-    printf("\n");
-    printf("Current Allocation:\n");
+    printf("Allocated Resources:\n");
     printAllocation();
-    printf("\n");
-    printf("Currently Available Resources: ");
+    printf("Need Resources:\n");
+    printNeed();
+    printf("Available Resources:\n");
     printAvailable();
-    printf("Current State: %s\n", state ? "SAFE" : "UNSAFE");
+    printf("State: %s\n", state ? "SAFE" : "UNSAFE");
 
 }
 

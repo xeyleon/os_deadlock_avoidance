@@ -18,12 +18,12 @@ To understand deadlock avoidance and practice the implementation of the Banker's
 ## Installation
 1. Download and unpack the repository into a directory of your choice.
 2. Start up a terminal and enter the directory you have chosen.
-3. Rename the file *makefile.mk* to *makefile*.
-    - ```mv makefile.mk Makefile```
+3. Rename the file *makefile.gmk* to *makefile*.
+    - ```mv makefile.gmk makefile```
 4. Run the command ```make```.
 5. The program is now ready to be invoked.
     - The program is invoked by passing the number of resources of each type via command line to intialize the available array by these values. For example, if there were four resource types, with ten instances of the first type, five of the second type, seven of the third type, and eight of the fourth type, you would invoke your program as follows:
-	```./assignment04.out 10 5 7 8```
+	```./201490550_a04 10 5 7 8```
 6. Once the program has been invoked, it awaits for user input commands.
     - Refer to the Features section for more details regarding commands.
 
@@ -66,29 +66,27 @@ Enter Command:
 ### Status Command
 ```bash
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
+Allocated Resources:
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+Need Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Allocation:
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-
-Currently Available Resources: 10 10 10 10 
-Current State: SAFE
+Available Resources:
+10 10 10 10 
+State: SAFE
 Enter Command: 
 ```
 ### Resource Request Denial
@@ -112,29 +110,27 @@ Resource request has been satisfied.
 Enter Command: RQ 3 1 1 1 1
 Resource request has been denied due to safety concerns.
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
-3 1 4 0 
-3 1 2 1 
-2 5 3 3 
-5 2 2 1 
-3 4 5 3 
-
-Current Allocation:
+Allocated Resources:
 3 3 3 3 
 1 1 1 1 
 0 0 0 0 
 1 1 1 1 
 2 2 2 2 
-
-Currently Available Resources: 3 3 3 3 
-Current State: SAFE
+Need Resources:
+3 1 4 0 
+3 1 2 1 
+2 5 3 3 
+5 2 2 1 
+3 4 5 3 
+Available Resources:
+3 3 3 3 
+State: SAFE
 Enter Command: 
 ```
 
@@ -143,109 +139,101 @@ Enter Command:
 Enter Command: RQ 0 1000 1000 1000 1000
 Resource request has been satisfied.
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
-0 0 0 0 
-4 2 3 2 
-2 5 3 3 
-6 3 3 2 
-5 6 7 5 
-
-Current Allocation:
+Allocated Resources:
 6 4 7 3 
 0 0 0 0 
 0 0 0 0 
 0 0 0 0 
 0 0 0 0 
-
-Currently Available Resources: 4 6 3 7 
-Current State: SAFE
+Need Resources:
+0 0 0 0 
+4 2 3 2 
+2 5 3 3 
+6 3 3 2 
+5 6 7 5 
+Available Resources:
+4 6 3 7 
+State: SAFE
 Enter Command: 
 ```
 ### Absurd Release
 ```bash
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
+Allocated Resources:
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+Need Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Allocation:
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-
-Currently Available Resources: 10 10 10 10 
-Current State: SAFE
+Available Resources:
+10 10 10 10 
+State: SAFE
 Enter Command: RQ 0 1000 1000 1000 1000
 Resource request has been satisfied.
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
-0 0 0 0 
-4 2 3 2 
-2 5 3 3 
-6 3 3 2 
-5 6 7 5 
-
-Current Allocation:
+Allocated Resources:
 6 4 7 3 
 0 0 0 0 
 0 0 0 0 
 0 0 0 0 
 0 0 0 0 
-
-Currently Available Resources: 4 6 3 7 
-Current State: SAFE
+Need Resources:
+0 0 0 0 
+4 2 3 2 
+2 5 3 3 
+6 3 3 2 
+5 6 7 5 
+Available Resources:
+4 6 3 7 
+State: SAFE
 Enter Command: RL 0 10000 10000 1000 1000
 Resources have been successfuly released.
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
+Allocated Resources:
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+Need Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Allocation:
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-
-Currently Available Resources: 10 10 10 10 
-Current State: SAFE
+Available Resources:
+10 10 10 10 
+State: SAFE
 Enter Command: 
 ```
 ### Execution of Program with Insufficient Resources
@@ -263,29 +251,27 @@ WARNING: The current state is unsafe.
 Enter Command: RQ 0 1 1 1 1
 Resource request has been denied due to safety concerns.
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
+Allocated Resources:
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+0 0 0 0 
+Need Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Allocation:
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-0 0 0 0 
-
-Currently Available Resources: 1 1 1 1 
-Current State: UNSAFE
+Available Resources:
+1 1 1 1 
+State: UNSAFE
 Enter Command: Run
 Current state is unsafe. Unable to proceed.
 Enter Command: 
@@ -294,6 +280,7 @@ Enter Command:
 ***
 
 ## Use Examples
+### Example 1
 ```bash
 user@ubuntu:~/assignment_4$ ./201490550_a04 9 8 7 9
 Number of customers: 5
@@ -309,29 +296,27 @@ Resource request is satisfied.
 Enter Command: RQ 0 1 1 1 1
 Resource request is satisfied.
 Enter Command: Status
-Maximum:
+Maximum Resources:
 6 4 7 3 
 4 2 3 2 
 2 5 3 3 
 6 3 3 2 
 5 6 7 5 
-
-Current Need:
-5 3 6 2 
-4 2 3 2 
-2 5 3 3 
-5 1 0 1 
-5 6 7 5 
-
-Current Allocation:
+Allocated Resources:
 1 1 1 1 
 0 0 0 0 
 0 0 0 0 
 1 2 3 1 
 0 0 0 0 
-
-Currently Available Resources: 7 5 3 7 
-Current State: SAFE
+Need Resources:
+5 3 6 2 
+4 2 3 2 
+2 5 3 3 
+5 1 0 1 
+5 6 7 5 
+Available Resources:
+7 5 3 7 
+State: SAFE
 Enter Command: RUN
 Safe Sequence is: < 1 2 3 0 4 >
 Executing threads:
@@ -377,6 +362,97 @@ Executing threads:
 	New Available: 9 8 7 9 
 Thread execution complete.
 ```
+
+### Example 2
+```bash
+user@ubuntu:~/Desktop/assignment04$ ./201490550_a04 10 5 7 8
+Number of customers: 5
+Currently available resources: 10 5 7 8 
+Maximum resources from file:
+6 4 7 3 
+4 2 3 2 
+2 5 3 3 
+6 3 3 2 
+5 5 7 5 
+Enter Command: RQ 0 1 0 0 1
+Resource request has been satisfied.
+Enter Command: RQ 1 1 1 1 1
+Resource request has been satisfied.
+Enter Command: RQ 2 2 2 2 2
+Resource request has been satisfied.
+Enter Command: RQ 3 1 1 1 1
+Resource request has been satisfied.
+Enter Command: RQ 4 1 0 0 0
+Resource request has been satisfied.
+Enter Command: Status
+Maximum Resources:
+6 4 7 3 
+4 2 3 2 
+2 5 3 3 
+6 3 3 2 
+5 5 7 5 
+Allocated Resources:
+1 0 0 1 
+1 1 1 1 
+2 2 2 2 
+1 1 1 1 
+1 0 0 0 
+Need Resources:
+5 4 7 2 
+3 1 2 1 
+0 3 1 1 
+5 2 2 1 
+4 5 7 5 
+Available Resources:
+4 1 3 3 
+State: SAFE
+Enter Command: Run
+Safe Sequence is: < 1 3 2 4 0 >
+Executing threads:
+--> Client/Thread 1
+	Allocated Resources: 1 1 1 1 
+	Needed: 3 1 2 1 
+	Available: 4 1 3 3 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 5 2 4 4 
+--> Client/Thread 3
+	Allocated Resources: 1 1 1 1 
+	Needed: 5 2 2 1 
+	Available: 5 2 4 4 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 6 3 5 5 
+--> Client/Thread 2
+	Allocated Resources: 2 2 2 2 
+	Needed: 0 3 1 1 
+	Available: 6 3 5 5 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 8 5 7 7 
+--> Client/Thread 4
+	Allocated Resources: 1 0 0 0 
+	Needed: 4 5 7 5 
+	Available: 8 5 7 7 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 9 5 7 7 
+--> Client/Thread 0
+	Allocated Resources: 1 0 0 1 
+	Needed: 5 4 7 2 
+	Available: 9 5 7 7 
+	Thread has started.
+	Thread has finished.
+	Thread is releasing resources.
+	New Available: 10 5 7 8 
+Thread execution complete.
+Enter Command: 
+```
+
 
 ***
 

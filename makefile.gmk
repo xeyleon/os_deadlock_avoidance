@@ -2,7 +2,7 @@
 CC = gcc
 CFLAGS = -Werror -Wall -g -std=gnu99
 LDFLAGS = -lrt -lpthread
-TARGET = 201490550_a04 201490550_a04
+TARGET = 201490550_a04
 OBJFILES = 201490550_a04.o
 
 all:
