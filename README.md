@@ -1,4 +1,4 @@
-# CP386 Assignment 4: Banker's Algorithm
+# Banker's Algorithm
 
 ## Description
 This program implements the Banker's Algorithm and simulates a banking machine, where the banker maintains track of the resources and clients (the user) can request for more or less resources from the banker. The banker onlys grant a request if it satisfies the safety algorithm. If a request does not leave the system in a safe state, the banker denies it.
